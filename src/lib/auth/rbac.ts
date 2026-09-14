@@ -260,5 +260,5 @@ export function navItemsForRole(role: Role) {
       { href: "/admin/submissions", label: "My submissions" },
     ];
   }
-  return [dashboard, { href: "/admin/reviews", label: "EDAS reviews" }];
+  return [dashboard, { href: "/admin/reviews", label: "My reviews" }];
 }

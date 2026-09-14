@@ -1,84 +1,91 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  BRAND_FULL,
-  BRAND_HERO,
-  BRAND_MOBILE_TAGLINE,
-  BRAND_SHORT,
-  BRAND_TAGLINE,
-} from "@/lib/branding";
+import { ArrowDown, ArrowUpRight, BookOpen, Globe2 } from "lucide-react";
+import { BRAND_FULL, BRAND_HERO } from "@/lib/branding";
 
-const CURRENT_HREF = "/journals/skrjet/current";
-const SUBMISSIONS_HREF = "/journals/skrjet/for-authors";
-
-type BrandHeroProps = {
-  /** Full landing hero, or a shorter campus band for interior pages */
-  variant?: "full" | "banner";
-};
-
-export function BrandHero({ variant = "full" }: BrandHeroProps) {
-  const isBanner = variant === "banner";
-
-  return (
-    <section className="relative isolate overflow-hidden text-white">
-      <Image
-        src={BRAND_HERO}
-        alt=""
-        fill
-        priority={!isBanner}
-        className="object-cover object-[center_40%]"
-        sizes="100vw"
-      />
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-forest-900/80 via-forest-700/72 to-navy-900/78"
-        aria-hidden
-      />
-
-      {isBanner ? (
-        <div className="relative mx-auto flex min-h-[9rem] max-w-6xl flex-col justify-center px-4 py-8 md:min-h-[11rem] md:py-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-400">{BRAND_SHORT}</p>
-          <h1 className="mt-1 max-w-3xl text-lg font-bold uppercase leading-snug tracking-wide text-white md:text-2xl">
-            {BRAND_FULL}
-          </h1>
-          <p className="mt-2 hidden max-w-2xl text-sm text-white/85 sm:block">{BRAND_TAGLINE}</p>
+export function BrandHero({ variant = "full" }: { variant?: "full" | "banner" }) {
+  if (variant === "banner")
+    return (
+      <section className="border-b border-forest-500/10 bg-[#edf2ee]">
+        <div className="mx-auto max-w-6xl px-6 py-7 lg:px-8">
+          <p className="eyebrow text-forest-500">Research · Education · Technology</p>
+          <p className="mt-2 max-w-2xl font-serif text-xl text-forest-900">{BRAND_FULL}</p>
         </div>
-      ) : (
-        <>
-          {/* Desktop / tablet */}
-          <div className="relative mx-auto hidden min-h-[28rem] max-w-6xl flex-col justify-center px-4 py-16 md:flex md:min-h-[32rem] md:py-20">
-            <h1 className="max-w-4xl text-3xl font-bold uppercase leading-tight tracking-wide text-white lg:text-4xl xl:text-[2.65rem] xl:leading-[1.15]">
-              {BRAND_FULL}
-            </h1>
-            <p className="mt-4 max-w-2xl text-base text-white/90 md:text-lg">{BRAND_TAGLINE}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href={CURRENT_HREF}
-                className="inline-flex items-center justify-center bg-gold-500 px-6 py-3 text-sm font-bold uppercase tracking-[0.1em] text-navy-900 transition hover:bg-gold-400"
-              >
-                Current Issue
-              </Link>
-              <Link
-                href={SUBMISSIONS_HREF}
-                className="inline-flex items-center justify-center border border-white/90 bg-transparent px-6 py-3 text-sm font-bold uppercase tracking-[0.1em] text-white transition hover:bg-white/10"
-              >
-                Submissions
-              </Link>
-            </div>
+      </section>
+    );
+  return (
+    <section className="landing-hero relative isolate overflow-hidden bg-forest-900 text-white">
+      <div className="absolute inset-y-0 right-0 w-full lg:w-[62%]">
+        <Image
+          src={BRAND_HERO}
+          alt="Sultan Kudarat State University campus"
+          fill
+          priority
+          className="object-cover object-center"
+          sizes="(min-width: 1024px) 62vw, 100vw"
+        />
+      </div>
+      <div className="hero-shade absolute inset-0" />
+      <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-16 md:py-24 lg:grid-cols-[1.4fr_0.6fr] lg:px-8">
+        <div className="hero-enter">
+          <div className="mb-7 flex items-center gap-3">
+            <span className="h-px w-8 bg-[#d8ba79]" />
+            <p className="eyebrow text-[#e1c991]">Sultan Kudarat State University</p>
           </div>
-
-          {/* Mobile */}
-          <div className="relative flex min-h-[22rem] flex-col items-center justify-center px-6 py-14 text-center md:hidden">
-            <p className="text-4xl font-bold tracking-wide text-white">{BRAND_SHORT}</p>
-            <p className="mt-3 text-sm font-medium tracking-wide text-white/90">{BRAND_MOBILE_TAGLINE}</p>
+          <h1 className="max-w-2xl font-serif text-[clamp(2.8rem,5.6vw,4.8rem)] font-normal leading-[1.08] tracking-[-0.045em]">
+            Ideas that advance.
+            <br />
+            <span className="italic text-[#e1c991]">Research that matters.</span>
+          </h1>
+          <p className="mt-7 max-w-lg text-base leading-relaxed text-white/75 md:text-lg">
+            Discover scholarship connecting education and technology, shaping new perspectives and
+            making a difference beyond the page.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href={CURRENT_HREF}
-              className="mt-8 inline-flex items-center justify-center bg-gold-500 px-7 py-3 text-sm font-bold uppercase tracking-[0.1em] text-navy-900"
+              href="#research"
+              className="inline-flex min-h-12 items-center gap-6 rounded-md bg-[#e1c991] px-6 text-sm font-semibold text-forest-900 transition hover:bg-[#f0deb7]"
             >
-              Current Issue
+              Find your next paper <ArrowUpRight size={17} />
+            </Link>
+            <Link
+              href="/journals/skrjet/for-authors"
+              className="inline-flex min-h-12 items-center gap-4 rounded-md border border-white/30 px-6 text-sm font-medium transition hover:bg-white/10"
+            >
+              Publish with us <ArrowUpRight size={17} />
             </Link>
           </div>
-        </>
-      )}
+          <div className="mt-12 flex flex-wrap gap-x-6 gap-y-3 text-xs text-white/70">
+            <span className="flex items-center gap-2">
+              <BookOpen size={15} /> Peer-reviewed scholarship
+            </span>
+            <span className="flex items-center gap-2">
+              <Globe2 size={15} /> Open access to knowledge
+            </span>
+          </div>
+        </div>
+        <div className="hidden flex-col justify-end pb-2 lg:flex">
+          <div className="border-l border-white/35 pl-6">
+            <p className="eyebrow text-[#e1c991]">Rooted in community</p>
+            <p className="mt-3 max-w-60 font-serif text-2xl leading-snug">
+              Local perspectives.
+              <br />
+              Global conversations.
+            </p>
+            <p className="mt-4 text-xs text-white/70">Tacurong City, Philippines</p>
+          </div>
+        </div>
+      </div>
+      <div className="relative border-t border-white/15">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4 lg:px-8">
+          <p className="text-xs tracking-wide text-white/65">
+            The Sultan Kudarat Research Journal of Education and Technology
+          </p>
+          <a href="#main" className="flex shrink-0 items-center gap-2 text-xs text-[#e1c991]">
+            Discover <ArrowDown size={14} />
+          </a>
+        </div>
+      </div>
     </section>
   );
 }

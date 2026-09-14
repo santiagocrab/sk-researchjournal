@@ -80,7 +80,7 @@ describe("RBAC", () => {
     );
     expect(navItemsForRole(Role.REVIEWER)).toEqual([
       { href: "/admin", label: "Dashboard" },
-      { href: "/admin/reviews", label: "EDAS reviews" },
+      { href: "/admin/reviews", label: "My reviews" },
     ]);
     expect(navItemsForRole(Role.READER)).toEqual([]);
   });

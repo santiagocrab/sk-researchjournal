@@ -43,7 +43,7 @@ const config: Config = {
           500: "#f0c929",
           600: "#e0b800",
         },
-        paper: "#f8faf9",
+        paper: "#f8f8f3",
       },
       fontFamily: {
         serif: ["var(--font-source-serif)", "Georgia", "serif"],

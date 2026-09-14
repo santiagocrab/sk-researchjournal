@@ -4,8 +4,60 @@ import { writeAuditLog } from "@/lib/audit";
 import { ConflictError, NotFoundError } from "@/lib/errors";
 import { hashPassword, assertPasswordPolicy } from "@/lib/auth/password";
 import { userCreateSchema, userUpdateSchema } from "@/lib/validation/schemas";
+import { authorRegistrationSchema } from "@/lib/validation/schemas";
 import type { SessionUser } from "@/lib/auth/session";
 import { sendAccountInvite } from "@/lib/email/notify";
+import { sanitizePlainText } from "@/lib/sanitize";
+
+export async function registerAuthor(raw: unknown) {
+  const input = authorRegistrationSchema.parse(raw);
+  assertPasswordPolicy(input.password);
+  const email = input.email.toLowerCase();
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing)
+    throw new ConflictError("An account already exists for this email. Sign in instead.");
+
+  const user = await prisma.$transaction(async (tx) => {
+    const created = await tx.user.create({
+      data: {
+        name: sanitizePlainText(`${input.firstName} ${input.lastName}`),
+        email,
+        passwordHash: await hashPassword(input.password),
+        role: Role.AUTHOR,
+        active: true,
+      },
+    });
+    await tx.author.create({
+      data: {
+        userId: created.id,
+        firstName: sanitizePlainText(input.firstName),
+        middleName: input.middleName ? sanitizePlainText(input.middleName) : null,
+        lastName: sanitizePlainText(input.lastName),
+        email,
+        affiliation: sanitizePlainText(input.affiliation),
+        country: sanitizePlainText(input.country),
+        orcid: input.orcid || null,
+        affiliations: {
+          create: {
+            name: sanitizePlainText(input.affiliation),
+            country: sanitizePlainText(input.country),
+            isPrimary: true,
+          },
+        },
+      },
+    });
+    return created;
+  });
+
+  await writeAuditLog({
+    userId: user.id,
+    action: AuditAction.CREATE,
+    entityType: "AuthorRegistration",
+    entityId: user.id,
+    metadata: { selfRegistered: true },
+  });
+  return { id: user.id, name: user.name, email: user.email, role: user.role };
+}
 
 export async function listUsers() {
   return prisma.user.findMany({
@@ -85,7 +137,8 @@ export async function updateUser(
   });
   await writeAuditLog({
     userId: actor.id,
-    action: input.role && input.role !== existing.role ? AuditAction.ROLE_CHANGE : AuditAction.UPDATE,
+    action:
+      input.role && input.role !== existing.role ? AuditAction.ROLE_CHANGE : AuditAction.UPDATE,
     entityType: "User",
     entityId: id,
     metadata: { from: existing.role, to: user.role, active: user.active },

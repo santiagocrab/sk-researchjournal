@@ -51,6 +51,28 @@ export const loginSchema = z.object({
   password: z.string().min(1).max(200),
 });
 
+export const authorRegistrationSchema = z.object({
+  firstName: z.string().trim().min(1).max(80),
+  middleName: z.string().trim().max(80).optional().nullable(),
+  lastName: z.string().trim().min(1).max(80),
+  email: z.string().trim().email().max(255),
+  affiliation: z.string().trim().min(2).max(300),
+  country: z.string().trim().min(2).max(80),
+  orcid: z
+    .string()
+    .trim()
+    .optional()
+    .nullable()
+    .refine((value) => !value || isValidOrcid(value), "Enter a valid ORCID iD"),
+  password: z
+    .string()
+    .min(12, "Use at least 12 characters")
+    .max(200)
+    .regex(/[A-Z]/, "Add an uppercase letter")
+    .regex(/[a-z]/, "Add a lowercase letter")
+    .regex(/[0-9]/, "Add a number"),
+});
+
 export const userCreateSchema = z.object({
   name: z.string().min(2).max(200),
   email: z.string().email().max(255),
@@ -261,7 +283,10 @@ export const searchQuerySchema = z.object({
   title: optionalSearchText,
   journal: z.preprocess(stringList, z.array(z.string().max(120)).default([])),
   year: z.preprocess(
-    (value) => stringList(value).map(Number).filter((year: number) => Number.isInteger(year) && year > 0),
+    (value) =>
+      stringList(value)
+        .map(Number)
+        .filter((year: number) => Number.isInteger(year) && year > 0),
     z.array(z.number().int().positive()).default([]),
   ),
   volume: optionalSearchInt,

@@ -291,10 +291,14 @@ export async function respondToInvitation(
   const assignment = await prisma.reviewAssignment.findUnique({ where: { id: assignmentId } });
   if (!assignment) throw new NotFoundError("Review assignment not found");
   if (assignment.reviewerId !== actor.id) throw new ForbiddenError();
+  if (assignment.status !== ReviewAssignmentStatus.INVITED) {
+    throw new AppError("This invitation has already been answered");
+  }
   return prisma.reviewAssignment.update({
     where: { id: assignmentId },
     data: {
       status: accept ? ReviewAssignmentStatus.ACCEPTED : ReviewAssignmentStatus.DECLINED,
+      conflictDeclared: accept,
     },
   });
 }
@@ -313,8 +317,8 @@ export async function submitReviewReport(
   if (assignment.reviewerId !== actor.id) {
     throw new ForbiddenError("Only the assigned reviewer may submit this report");
   }
-  if (assignment.status === ReviewAssignmentStatus.DECLINED) {
-    throw new AppError("This invitation was declined");
+  if (assignment.status !== ReviewAssignmentStatus.ACCEPTED) {
+    throw new AppError("Accept the review invitation before submitting a report");
   }
   if (assignment.report) throw new AppError("A report has already been submitted");
   const input = reviewReportSchema.parse(raw);

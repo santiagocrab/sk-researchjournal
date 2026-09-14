@@ -14,8 +14,8 @@ export { SiteHeader };
 
 export function SiteFooter() {
   return (
-    <footer id="contact" className="mt-auto border-t border-ink-100 bg-white">
-      <div className="mx-auto max-w-6xl px-4 py-10">
+    <footer id="contact" className="mt-auto border-t border-forest-900/10 bg-[#edf2ee]">
+      <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
           <div>
             <Image
@@ -34,7 +34,10 @@ export function SiteFooter() {
                 {BRAND_CONTACT.phone}
               </a>
               {" · "}
-              <a className="font-medium text-navy-700 hover:underline" href={`mailto:${BRAND_CONTACT.email}`}>
+              <a
+                className="font-medium text-navy-700 hover:underline"
+                href={`mailto:${BRAND_CONTACT.email}`}
+              >
                 {BRAND_CONTACT.email}
               </a>
               {" · "}
@@ -52,16 +55,40 @@ export function SiteFooter() {
             <p className="font-medium text-navy-700">{BRAND_SHORT}</p>
             <p className="mt-1 max-w-sm md:ml-auto">{BRAND_NAME}</p>
             <p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 md:justify-end">
-              <Link className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700" href="/journals/skrjet/for-authors">
+              <Link
+                className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700"
+                href="/journals/skrjet/for-authors"
+              >
                 For authors
               </Link>
-              <Link className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700" href="/journals/skrjet/editorial-workflow">
+              <Link
+                className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700"
+                href="/journals/skrjet/for-reviewers"
+              >
+                For reviewers
+              </Link>
+              <Link
+                className="font-semibold text-forest-500 underline decoration-forest-500/30 underline-offset-2"
+                href="/submit"
+              >
+                Submit a paper
+              </Link>
+              <Link
+                className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700"
+                href="/journals/skrjet/editorial-workflow"
+              >
                 Guidelines
               </Link>
-              <Link className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700" href="/login">
+              <Link
+                className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700"
+                href="/login"
+              >
                 Editorial login
               </Link>
-              <Link className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700" href="/search">
+              <Link
+                className="underline decoration-ink-300 underline-offset-2 hover:text-navy-700"
+                href="/search"
+              >
                 Search
               </Link>
             </p>
@@ -80,16 +107,16 @@ export function PublicShell({
   hero,
 }: {
   children: React.ReactNode;
-  /** Override the default full campus hero. Pass null to hide. */
+  /** Override the default compact journal banner. Pass null to hide. */
   hero?: React.ReactNode | null;
 }) {
-  const banner = hero === undefined ? <BrandHero variant="full" /> : hero;
+  const banner = hero === undefined ? <BrandHero variant="banner" /> : hero;
 
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       {banner}
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 py-10">
+      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-6 py-12 lg:px-8">
         {children}
       </main>
       <SiteFooter />
