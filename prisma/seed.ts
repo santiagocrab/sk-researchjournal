@@ -1,5 +1,3 @@
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import {
   ArticleStatus,
   ArticleType,
@@ -14,6 +12,7 @@ import { DEFAULT_SETTINGS } from "../src/lib/settings";
 import { SKRJET_DESCRIPTION_HTML, SKRJET_FOUNDING_BOARD } from "../src/lib/content/skrjet";
 import { seedSearchFacetDemo } from "./seed-search-facets";
 import { seedComputingTechnologyArticle } from "./seed-jct-article";
+import { storeSeedFile } from "./seed-storage";
 
 /** Neon’s default URI often includes channel_binding=require, which breaks many Node clients. */
 function normalizeDatabaseUrl(url: string | undefined) {
@@ -47,11 +46,8 @@ const SAMPLE_PNG = Buffer.from(
   "base64",
 );
 
-async function store(key: string, body: Buffer) {
-  const full = path.resolve(process.cwd(), ".storage", key);
-  await mkdir(path.dirname(full), { recursive: true });
-  await writeFile(full, body);
-  return `/api/files/${key.split("/").map(encodeURIComponent).join("/")}`;
+async function store(key: string, body: Buffer, mimeType?: string) {
+  return storeSeedFile(key, body, mimeType);
 }
 
 async function main() {
@@ -308,10 +304,10 @@ async function main() {
     const pdfKey = `journals/${journal.id}/articles/${article.id}/final_pdf/seed.pdf`;
     const thumbKey = `journals/${journal.id}/articles/${article.id}/thumbnail/seed.png`;
     const suppKey = `journals/${journal.id}/articles/${article.id}/supplementary/dataset.txt`;
-    const pdfUrl = await store(pdfKey, SAMPLE_PDF);
-    const thumbUrl = await store(thumbKey, SAMPLE_PNG);
+    const pdfUrl = await store(pdfKey, SAMPLE_PDF, "application/pdf");
+    const thumbUrl = await store(thumbKey, SAMPLE_PNG, "image/png");
     const suppBody = Buffer.from(`Supplementary dataset for ${input.title}\nrows=12\n`);
-    const suppUrl = await store(suppKey, suppBody);
+    const suppUrl = await store(suppKey, suppBody, "text/plain");
     await prisma.articleFile.createMany({
       data: [
         {

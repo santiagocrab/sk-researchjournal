@@ -1,5 +1,3 @@
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import {
   ArticleStatus,
   ArticleType,
@@ -10,16 +8,14 @@ import {
   Role,
 } from "@prisma/client";
 import { DEFAULT_SETTINGS } from "../src/lib/settings";
+import { storeSeedFile } from "./seed-storage";
 
 const SAMPLE_PDF = Buffer.from(
   "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n",
 );
 
 async function store(key: string, body: Buffer) {
-  const full = path.resolve(process.cwd(), ".storage", key);
-  await mkdir(path.dirname(full), { recursive: true });
-  await writeFile(full, body);
-  return `/api/files/${key.split("/").map(encodeURIComponent).join("/")}`;
+  return storeSeedFile(key, body, "application/pdf");
 }
 
 export async function seedSearchFacetDemo(
